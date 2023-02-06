@@ -7,16 +7,20 @@
       :price="price"
       :description="description"
     />
+
+    <appointments-component />
   </div>
 </template>
 
 <script>
 import CardComponent from './components/CardComponent.vue';
+import AppointmentsComponent from './components/AppointmentsComponent.vue';
 
 export default {
   name: 'App',
   components: {
     CardComponent,
+    AppointmentsComponent,
   },
   data() {
     return {
