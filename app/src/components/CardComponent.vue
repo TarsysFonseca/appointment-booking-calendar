@@ -10,7 +10,7 @@
         <div class="name">{{ name }}</div>
         <span>psicologist | Lisbon</span>
         <rating-component :rating=rating :reviews-number="rating" />
-        <div class="price">{{ price }} / 50 minutes</div>
+        <div class="price">{{ formatedPrice }} / {{ sessionDuration }} minutes</div>
       </div>
     </div>
 
@@ -23,6 +23,8 @@
 <script>
 import AvatarComponent from './AvatarComponent.vue';
 import RatingComponent from './RatingComponent.vue';
+
+import formatCurrency from '../utils/format-currency';
 
 export default {
   name: 'CardComponent',
@@ -47,9 +49,18 @@ export default {
       type: Number,
       required: true,
     },
+    sessionDuration: {
+      type: Number,
+      default: 50,
+    },
     description: {
       type: String,
       required: true,
+    },
+  },
+  computed: {
+    formatedPrice() {
+      return formatCurrency(this.price, 0);
     },
   },
 };
