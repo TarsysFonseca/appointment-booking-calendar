@@ -1,21 +1,25 @@
 <template>
   <div id="app">
-    <card-component
-      :avatar="avatar"
-      :name="name"
-      :rating="rating"
-      :price="price"
-      :description="description"
-    />
+    <div>
+      <card-component
+        :avatar="avatar"
+        :name="name"
+        :rating="rating"
+        :price="price"
+        :description="description"
+      />
 
-    <appointments-headers
-      @change-avalible-slots="getData"
-    />
+      <div>
+        <appointments-headers
+          @change-avalible-slots="getData"
+        />
 
-    <appointments-containers
-      :start-date="startDate"
-      :end-date="endDate"
-    />
+        <appointments-containers
+          :start-date="startDate"
+          :end-date="endDate"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
