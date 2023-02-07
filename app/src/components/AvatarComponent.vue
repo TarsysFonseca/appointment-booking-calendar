@@ -26,10 +26,7 @@ export default {
   height: 180px;
   border-radius: 50%;
   overflow: hidden;
-  background-image: url(https://faces-img.xcdn.link/image-lorem-face-3408.jpg);
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
+  background-color: #007bdb;
 
   img {
     width: 100%;

@@ -1,13 +1,25 @@
 <template>
   <div class="appointments-containers">
-    <div v-for="(times, index) in availableTimes" :key="index">
-      <div v-for="(time, index) in times" :key="index">{{ time }}</div>
+    <div v-if="haveDatesAvailable" class="appointments-containers__full">
+      <div v-for="(times, index) in availabilityTable" :key="index">
+        <div
+          :class="['cell', {'background': cmp(time)}]"
+          v-for="(time, index) in times"
+          :key="index"
+        >
+          {{ time }}
+        </div>
+      </div>
+    </div>
+
+    <div v-else class="appointments-containers__empty">
+      {{ verifyFn }}
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import AvailabilityTableService from '../services/AvailabilityTableService';
 
 export default {
   name: 'AppointmentsContainers',
@@ -27,40 +39,48 @@ export default {
   },
   data() {
     return {
-      availableTimes: [],
+      availabilityTable: [],
+      haveDatesAvailable: false,
+      isLoading: true,
     };
   },
   mounted() {
-    this.getAvailability();
+    this.getData();
+  },
+  computed: {
+    verifyFn() {
+      return this.isLoading ? 'Carregando ...' : 'Não há horários disponíveis para essa semana.';
+    },
   },
   watch: {
     startDate() {
-      this.getAvailability();
+      this.getData();
     },
   },
   methods: {
-    async getAvailability() {
-      try {
-        const { data, status } = await axios.get('http://localhost:3000/availability');
+    async getData() {
+      this.haveDatesAvailable = false;
+      this.isLoading = true;
 
-        if (status !== 200) {
-          throw new Error('Status error!');
-        }
-
-        this.formatTable(data.availableTimes);
-      } catch (error) {
-        console.error(error);
-      }
+      setTimeout(async () => {
+        const availabilityTable = await AvailabilityTableService.getAvailabilityTable();
+        this.formatTable(availabilityTable);
+        this.isLoading = false;
+      }, 1000);
     },
-    formatTable(availableTimes) {
+    formatTable(availabilityTable) {
       const index = Math.floor(Math.random() * 10);
-      const input = availableTimes[index];
+      const input = availabilityTable[index];
 
-      this.availableTimes = input.map((row) => {
+      this.availabilityTable = input.map((row) => {
         const lineToFill = new Array(this.linesNumbers).fill('-');
+        this.haveDatesAvailable = this.haveDatesAvailable || row.length > 0;
         row.forEach((value, i) => { lineToFill[i] = value; });
         return lineToFill;
       });
+    },
+    cmp(time) {
+      return time !== '-';
     },
   },
 };
@@ -68,8 +88,41 @@ export default {
 
 <style lang="scss">
 .appointments-containers {
-  display: grid;
   text-align: center;
-  grid-template-columns: 100px 100px 100px 100px;
+  box-shadow: 2px 2px 10px #d7d7d7;
+  margin-top: 10px;
+
+  &__full {
+    display: grid;
+    height: 255px;
+    grid-template-columns: repeat(4, 2fr);
+    justify-content: center;
+    padding: 0 30px 0 50px;
+    overflow-y: scroll;
+  }
+
+  .cell {
+    margin: 10px 5px;
+    padding: 10px;
+
+    &.background {
+      background-color: #e1e5ed;
+
+      &:hover {
+        background-color: #007bdb;
+        color: #fff;
+        cursor: pointer;
+      }
+    }
+  }
+
+  &__empty {
+    display: grid;
+    height: 255px;
+    align-items: center;
+    grid-template-columns: 1fr;
+    padding: 0 50px;
+    overflow: auto;
+  }
 }
 </style>

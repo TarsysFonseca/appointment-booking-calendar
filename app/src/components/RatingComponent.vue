@@ -1,13 +1,13 @@
 <template>
-  <div class="rating-service">
+  <div class="rating">
     <div
-      class="star"
+      class="rating__star"
       v-for="starIndex in maximumStarNumber"
       :key="starIndex"
     >
       <font-awesome-icon :icon="[rating >= starIndex ? 'fas' : 'far', 'star']" />
     </div>
-    <span class="reviews">({{ reviewsNumber  }} reviews)</span>
+    <span class="rating__reviews">({{ reviewsNumber  }} reviews)</span>
   </div>
 </template>
 
@@ -31,14 +31,14 @@ export default {
 </script>
 
 <style lang="scss">
-.rating-service {
+.rating {
   display: flex;
 
-  .star {
+  &__star {
     color: #ffc107;
   }
 
-  .reviews {
+  &__reviews {
     margin-left: 10px;
   }
 }

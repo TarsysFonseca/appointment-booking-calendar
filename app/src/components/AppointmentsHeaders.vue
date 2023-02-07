@@ -1,17 +1,24 @@
 <template>
   <div>
     <div class="appointments-header">
-      <div>
+      <div class="appointments-header__title">
         <p>Schedule your session!</p>
-        <p>Timezone: Lisbon (+1)</p>
+        <p>Timezone: {{ getLocalTimezone }}</p>
       </div>
 
-      <div class="appointments-header--dates">
-        <button @click="changePage('previous')">Anterior</button>
-        <div v-for="(date, index) in currentDates" :key="index">
-          {{ formatDay(date) }}
+      <div class="appointments-header__dates">
+        <button :class="{'disabled': isBeforeToday}" @click="changePage('previous')">
+          <font-awesome-icon :icon="['fas', 'circle-chevron-left']" />
+        </button>
+        <div
+          v-for="(date, index) in currentDates"
+          :key="index"
+        >
+          <span class="appointments-header__dates--display" v-html="formatDay(date)"></span>
         </div>
-        <button @click="changePage('next')">Próximo</button>
+        <button @click="changePage('next')">
+          <font-awesome-icon :icon="['fas', 'circle-chevron-right']" />
+        </button>
       </div>
     </div>
   </div>
@@ -31,8 +38,21 @@ export default {
       currentDates: [new Date(), ...generateDateArray({ arraySize: 3 })],
     };
   },
+  computed: {
+    isBeforeToday() {
+      return this.currentDates[0].toDateString() === new Date().toDateString();
+    },
+    getLocalTimezone() {
+      const offset = new Date().getTimezoneOffset() / -60;
+      return `${Intl.DateTimeFormat().resolvedOptions().timeZone} (${offset > 0 ? '+' : ''}${offset})`;
+    },
+  },
   methods: {
     changePage(direction) {
+      if (this.isBeforeToday && direction === 'previous') {
+        return;
+      }
+
       const config = {
         next: {
           order: 'asc',
@@ -54,8 +74,11 @@ export default {
       });
     },
     formatDay(date) {
-      const [week, moth, day] = date.toDateString().split(' ');
-      return `${week} ${moth} ${day}`;
+      const [week, month, day] = date.toDateString().split(' ');
+      return `
+        <div class="week">${week}</div>
+        <div class="day">${month} ${day}</div>
+      `;
     },
   },
 };
@@ -66,9 +89,58 @@ export default {
   display: grid;
   text-align: center;
 
-  &--dates {
+  &__title{
+    background-color: #007bdb;
+    color: #fff;
+
+    p {
+      margin: 0;
+
+      &:first-child {
+        font-size: 22px;
+        margin-top: 15px;
+      }
+
+      &:last-child {
+        font-size: 16px;
+        margin-bottom: 15px;
+      }
+    }
+  }
+
+  &__dates {
     display: grid;
+    height: 70px;
+    align-items: center;
     grid-template-columns: 1fr repeat(4, 2fr) 1fr;
+    box-shadow: 2px 2px 10px #d7d7d7;
+
+    &--display {
+      display: flex;
+      flex-direction: column;
+      text-transform: uppercase;
+
+      .week {
+        font-size: 12px;
+      }
+
+      .day {
+        font-size: 18px;
+      }
+    }
+
+    button {
+      background-color: transparent;
+      border: none;
+      color: #404e55;
+      font-size: 30px;
+      cursor: pointer;
+
+      &.disabled {
+        color: #a5aaaa;
+        cursor: not-allowed;
+      }
+    }
   }
 }
 </style>
