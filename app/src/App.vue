@@ -8,19 +8,28 @@
       :description="description"
     />
 
-    <appointments-component />
+    <appointments-headers
+      @change-avalible-slots="getData"
+    />
+
+    <appointments-containers
+      :start-date="startDate"
+      :end-date="endDate"
+    />
   </div>
 </template>
 
 <script>
 import CardComponent from './components/CardComponent.vue';
-import AppointmentsComponent from './components/AppointmentsComponent.vue';
+import AppointmentsHeaders from './components/AppointmentsHeaders.vue';
+import AppointmentsContainers from './components/AppointmentsContainers.vue';
 
 export default {
   name: 'App',
   components: {
     CardComponent,
-    AppointmentsComponent,
+    AppointmentsHeaders,
+    AppointmentsContainers,
   },
   data() {
     return {
@@ -32,7 +41,16 @@ export default {
       rating: 4,
       price: 160,
       description: 'Sed in mauris in ipsum bibendum efficitur. Donec et maximus ante. Praesent non elit eget ligula laoreet volutpat. Sed nec consectetur massa, et commodo massa. Sed porta sodales ex non tempor. Nam sit amet orci ullamcorper, ultrices turpis sit amet, facilisis libero. Mauris nec ipsum eu nibh pulvinar pellentesque eget in elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque scelerisque quam eros, vitae vestibulum ante congue a. Donec eu odio orci. Sed viverra eros eget sem rhoncus ornare. Donec massa mi, aliquam et euismod id, molestie sed ante. Phasellus aliquet, diam a facilisis vehicula, est elit fermentum enim.',
+      startDate: {},
+      endDate: {},
     };
+  },
+  methods: {
+    getData(paylod) {
+      const { startDate, endDate } = paylod;
+      this.startDate = startDate;
+      this.endDate = endDate;
+    },
   },
 };
 </script>
